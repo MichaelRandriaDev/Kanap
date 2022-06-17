@@ -2,13 +2,11 @@ let cartContent = JSON.parse(localStorage.getItem("productStored"));
 
 console.table(cartContent);
 
-// let totalPrice = 0;
-let totalQtty = 0;
 var productWithPrice = [];
 
 fetch('http://localhost:3000/api/products')
 .then(res => res.json())
-    .then((data) => {
+.then((data) => {
     console.log(data);
     for(let i = 0; i < cartContent.length; i++){
         let productPrice = data.find(el => el._id === cartContent[i].id).price;
@@ -20,13 +18,13 @@ fetch('http://localhost:3000/api/products')
         productWithPrice.push(productIdPrice);
     }
     console.table(productWithPrice);
-
+    
     let totalPrice = 0;
     
     let cartItems = document.getElementById("cart__items");
     
     for(let i = 0; i < cartContent.length; i++){
-        
+         
         let price = productWithPrice.find(el => el.id === cartContent[i].id).price;
 
         totalPrice += price * parseInt(cartContent[i].quantity);
@@ -53,6 +51,19 @@ fetch('http://localhost:3000/api/products')
             </div>
             </article>`
     }
+
+    let itemQty = document.getElementsByClassName('itemQuantity');
+    let itemLgth = itemQty.length;
+    let totalQtty;
+    totalQtty = 0;
+
+    for (let i = 0; i < itemLgth ; i++){
+        totalQtty += itemQty[i].valueAsNumber;
+    }
+
+    let productTotalQty = document.getElementById('totalQuantity');
+    productTotalQty.innerHTML = totalQtty;
+    console.log(totalQtty);
         
     let productTotalPrice = document.getElementById('totalPrice');
     productTotalPrice.innerHTML = totalPrice;
@@ -106,22 +117,84 @@ function removeProduct(){
     }
 }
 
-function getForm(){
+let form = document.querySelector(".cart__order__form");
 
-    const btn_sendForm = document.getElementsByClassName("cart__order__form__submit");
-    console.log(btn_sendForm);
+const regexChar = /[a-zA-Z ,.'-]+$/;
+const regexAdress = /^[a-zA-Z0-9\s,.'-]{3,}$/; 
+const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    btn_sendForm.addEventListener("click", (event) => {
-        event.preventDefault();
-            
-        const formValue = {
-            prenom : document.getElementsByClassName('firstName').value,
-            nom : document.getElementsByClassName('lastName').value,
-            adresse : document.querySelector('address').value,
-            ville : document.querySelector('city').value,
-            email : document.querySelector('email').value,
-        }
-    })
+const prenom = document.getElementById("firstName");
+const nom = document.getElementById("lastName");
+const ville = document.getElementById("city");
+const adresse = document.getElementById("address");
+const mail = document.getElementById("email");
+
+form.firstName.addEventListener("change" , (event) => {
+    console.log(event.target.value);
+    checkFirstName(event.target.value);
+})
+
+form.lastName.addEventListener("change" , (event) => {
+    console.log(event.target.value);
+    checkLastName(event.target.value);
+})
+
+form.address.addEventListener("change" , (event) => {
+    console.log(event.target.value);
+    checkAddress(event.target.value);
+})
+
+form.city.addEventListener("change" , (event) => {
+    console.log(event.target.value);
+    checkCity(event.target.value);
+})
+
+form.email.addEventListener("change" , (event) => {
+    console.log(event.target.value);
+    checkEmail(event.target.value);
+})
+
+function checkFirstName(prenom){
+    const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+    if(regexChar.test(prenom)){
+        firstNameErrorMsg.innerHTML = '';
+    }else{
+        firstNameErrorMsg.innerHTML = 'error';
+    }
 }
 
-getForm();
+function checkLastName(nom){
+    const lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+    if(regexChar.test(nom)){
+        lastNameErrorMsg.innerHTML = '';
+    }else{
+        lastNameErrorMsg.innerHTML = 'error';
+    }
+}
+
+function checkAddress(adresse){
+    const addressErrorMsg = document.getElementById("addressErrorMsg");
+    if(regexAdress.test(adresse)){
+        addressErrorMsg.innerHTML = '';
+    }else{
+        addressErrorMsg.innerHTML = 'error';
+    }
+}
+
+function checkCity(ville){
+    const cityErrorMsg = document.getElementById("cityErrorMsg");
+    if(regexChar.test(ville)){
+        cityErrorMsg.innerHTML = '';
+    }else{
+        cityErrorMsg.innerHTML = 'error';
+    }
+}
+
+function checkEmail(email){
+    const emailErrorMsg = document.getElementById("emailErrorMsg");
+    if(regexEmail.test(email)){
+        emailErrorMsg.innerHTML = '';
+    }else{
+        emailErrorMsg.innerHTML = 'error';
+    }
+}
