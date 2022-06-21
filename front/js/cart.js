@@ -1,16 +1,18 @@
-let cartContent = JSON.parse(localStorage.getItem("productStored"));
-
+let cartContent = JSON.parse(localStorage.getItem("productStored")); // Récupération du localStorage 
 console.table(cartContent);
 
-var productWithPrice = [];
+var productWithPrice = []; // Déclaration du tableau qui va recevoir le produit avec son prix
 
+// Récupération des produits
 fetch('http://localhost:3000/api/products')
 .then(res => res.json())
 .then((data) => {
-    console.log(data);
     for(let i = 0; i < cartContent.length; i++){
-        let productPrice = data.find(el => el._id === cartContent[i].id).price;
+        // La fonction find va isoler les produits disposant du même id pour ensuite y stocker le prix
+        let productPrice = data.find(el => el._id === cartContent[i].id).price; 
         console.log(productPrice);
+
+        // Déclaration d'un nouvel objet contenant l'id et le prix du produit puis push dans le tableau productWithPrice
         let productIdPrice = {
             id : cartContent[i].id,
             price : productPrice,
@@ -25,10 +27,11 @@ fetch('http://localhost:3000/api/products')
     
     for(let i = 0; i < cartContent.length; i++){
          
-        let price = productWithPrice.find(el => el.id === cartContent[i].id).price;
+        let price = productWithPrice.find(el => el.id === cartContent[i].id).price; // On isole le prix dans une variable dédiée
 
-        totalPrice += price * parseInt(cartContent[i].quantity);
+        totalPrice += price * parseInt(cartContent[i].quantity); //Calcul du prix total
 
+        //Affichage des produits dans le panier
         cartItems.innerHTML += `<article class="cart__item" data-id="${cartContent[i].id}" data-color="${cartContent[i].color}">
         <div class="cart__item__img">
             <img src="${cartContent[i].image}" alt="${cartContent[i].alt}">
@@ -56,15 +59,17 @@ fetch('http://localhost:3000/api/products')
     let itemLgth = itemQty.length;
     let totalQtty;
     totalQtty = 0;
-
+    
     for (let i = 0; i < itemLgth ; i++){
         totalQtty += itemQty[i].valueAsNumber;
     }
-
+    
+    // Affichage dynamique de la quantité totale 
     let productTotalQty = document.getElementById('totalQuantity');
     productTotalQty.innerHTML = totalQtty;
     console.log(totalQtty);
         
+    // Affichage dynamique du prix total
     let productTotalPrice = document.getElementById('totalPrice');
     productTotalPrice.innerHTML = totalPrice;
     console.log(totalPrice);
@@ -74,11 +79,11 @@ fetch('http://localhost:3000/api/products')
 }) 
 
 
-function modifyQty(){
+function modifyQty(){ 
     let qttModif = document.querySelectorAll(".itemQuantity");
 
     for (let i = 0; i < qttModif.length; i++){
-        qttModif[i].addEventListener("change" , (event) => {
+        qttModif[i].addEventListener("change" , (event) => { // Le code suivant sera lancé lorsqu'une modification de la valeur de l'input sera détectée
             event.preventDefault();
 
             let qttModifValue = qttModif[i].valueAsNumber;
@@ -87,7 +92,7 @@ function modifyQty(){
                 cartContent[i].quantity = qttModifValue;  
             }
 
-            localStorage.setItem("productStored", JSON.stringify(cartContent));
+            localStorage.setItem("productStored", JSON.stringify(cartContent)); // Maj dans le localStorage
             
             location.reload();
         })
@@ -99,18 +104,16 @@ function removeProduct(){
     let btn_supprimer = document.querySelectorAll(".deleteItem");
 
     for (let i = 0; i < btn_supprimer.length; i++){
-        btn_supprimer[i].addEventListener("click" , (event) => {
+        btn_supprimer[i].addEventListener("click" , (event) => { // Le code suivant sera lancé lorsqu'une modification de la valeur de l'input sera détectée
             event.preventDefault();
 
-            //Selection de l'element à supprimer en fonction de son id ET sa couleur
             let idDelete = cartContent[i].id;
             let colorDelete = cartContent[i].color;
 
-            cartContent = cartContent.filter( el => el.id !== idDelete || el.color !== colorDelete );
+            cartContent = cartContent.filter( el => el.id !== idDelete || el.color !== colorDelete ); // Filtrage de l'élément qui ne correspond pas aux conditions
             
             localStorage.setItem("productStored", JSON.stringify(cartContent));
 
-            //Alerte produit supprimé et refresh
             alert("Ce produit a bien été supprimé du panier");
             location.reload();
         })
@@ -199,11 +202,13 @@ function checkEmail(email){
     }
 }
 
+function checkForm (){
+
+}
+
 function sendOrder(){
     
     let btn__order = document.getElementById("order");
-    
-    console.log(btn__order);
 
     btn__order.addEventListener("click", (event) => {
         event.preventDefault();
