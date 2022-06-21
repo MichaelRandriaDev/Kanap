@@ -119,8 +119,8 @@ function removeProduct(){
 
 let form = document.querySelector(".cart__order__form");
 
-const regexChar = /[a-zA-Z ,.'-]+$/;
-const regexAdress = /^[a-zA-Z0-9\s,.'-]{3,}$/; 
+const regexChar =  /^[A-Za-zÀ-ÖØ-öø-ÿ ,.'-]+$/;
+const regexAdress = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s,.'-]{3,}$/; 
 const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const prenom = document.getElementById("firstName");
@@ -198,3 +198,66 @@ function checkEmail(email){
         emailErrorMsg.innerHTML = 'error';
     }
 }
+
+function sendOrder(){
+    
+    let btn__order = document.getElementById("order");
+    
+    console.log(btn__order);
+
+    btn__order.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        let onlyId = [];
+        const prenom = document.getElementById("firstName").value;
+        const nom = document.getElementById("lastName").value;
+        const ville = document.getElementById("city").value;
+        const adresse = document.getElementById("address").value;
+        const mail = document.getElementById("email").value;
+    
+        let contactOrder = {
+            firstName: prenom,
+            lastName: nom,
+            city: ville,
+            address: adresse,
+            email: mail,
+        }
+        console.log(contactOrder);
+
+        for(let i = 0; i < cartContent.length; i++){
+            let productId = cartContent[i].id;
+            console.log(productId);
+            onlyId.push(productId);
+        }
+        
+        const toSend = {
+            'products': onlyId,
+            'contact': contactOrder,
+        }
+
+        console.log(toSend);
+
+        const promise01 = fetch('http://localhost:3000/api/products/order',{
+            method: 'POST',
+            body: JSON.stringify(toSend),
+            headers: {
+                "Content-type" : 'application/json;charset=utf-8',
+            }
+        })
+        .then(function(res) {
+            if (res.ok) {
+            return res.json();
+            }
+        })
+        .then((data) => {
+            console.log(data);
+            localStorage.setItem("orderId", data.orderId) // OrderID placé dans le LocalStorage avant changement de page
+            window.location.replace("./confirmation.html");
+        })
+        .catch(function(err) {
+            console.log("erreur!");
+        })
+    })
+}
+
+sendOrder();
