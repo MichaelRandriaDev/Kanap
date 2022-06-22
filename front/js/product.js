@@ -6,12 +6,14 @@ let product = [];
 const colorChoiced = document.querySelector("#colors");
 const quantityChoiced = document.querySelector("#quantity");
 
+/////////////////////////////////////////////////////////////AFFICHAGE PRODUIT////////////////////////////////////////////////////////////////////
+
 // Récupération des données de l'api en fonction de l'ID du produit
 fetch(`http://localhost:3000/api/products/${urlID}`)
     .then((res) => res.json())
     .then((data) =>{
         product = data;
-
+        console.log(data);
         // Affichage du produit unique
         let productImg = document.getElementsByClassName("item__img")[0];
 
@@ -41,6 +43,8 @@ fetch(`http://localhost:3000/api/products/${urlID}`)
             alert("Le chargement des données à rencontré un problème." +error);
         });
 ;
+
+/////////////////////////////////////////////////////////////AJOUT AUX PANIER////////////////////////////////////////////////////////////////////
 
 function addBasket() {
 
@@ -90,5 +94,6 @@ function addBasket() {
         } else {
             alert("Veuillez choisir un nombre en 1 et 100"); // La condition du if n'étant pas validé, un message d'erreur est affiché.
         }
+        alert("Produit ajouté à votre panier.");
     })
 }

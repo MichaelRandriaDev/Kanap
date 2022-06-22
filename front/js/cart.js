@@ -3,6 +3,8 @@ console.table(cartContent);
 
 var productWithPrice = []; // Déclaration du tableau qui va recevoir le produit avec son prix
 
+/////////////////////////////////////////////////////////////AFFICHAGE PANIER + QTY ET PRIX TOTAL////////////////////////////////////////////////////////////////////
+
 // Récupération des produits
 fetch('http://localhost:3000/api/products')
 .then(res => res.json())
@@ -21,7 +23,7 @@ fetch('http://localhost:3000/api/products')
     }
     console.table(productWithPrice);
     
-    let totalPrice = 0;
+    let totalPrice = 0; 
     
     let cartItems = document.getElementById("cart__items");
     
@@ -61,7 +63,7 @@ fetch('http://localhost:3000/api/products')
     totalQtty = 0;
     
     for (let i = 0; i < itemLgth ; i++){
-        totalQtty += itemQty[i].valueAsNumber;
+        totalQtty += itemQty[i].valueAsNumber; // Calcul de la quantité totale
     }
     
     // Affichage dynamique de la quantité totale 
@@ -78,12 +80,13 @@ fetch('http://localhost:3000/api/products')
     removeProduct();
 }) 
 
+/////////////////////////////////////////////////////////////MODIFICATION QUANTITE////////////////////////////////////////////////////////////////////
 
 function modifyQty(){ 
     let qttModif = document.querySelectorAll(".itemQuantity");
 
     for (let i = 0; i < qttModif.length; i++){
-        qttModif[i].addEventListener("change" , (event) => { // Le code suivant sera lancé lorsqu'une modification de la valeur de l'input sera détectée
+        qttModif[i].addEventListener("change" , (event) => { 
             event.preventDefault();
 
             let qttModifValue = qttModif[i].valueAsNumber;
@@ -92,13 +95,14 @@ function modifyQty(){
                 cartContent[i].quantity = qttModifValue;  
             }
 
-            localStorage.setItem("productStored", JSON.stringify(cartContent)); // Maj dans le localStorage
-            
+            localStorage.setItem("productStored", JSON.stringify(cartContent)); 
+
             location.reload();
         })
     }
 }
 
+/////////////////////////////////////////////////////////////SUPPRESSION PRODUIT////////////////////////////////////////////////////////////////////
 
 function removeProduct(){
     let btn_supprimer = document.querySelectorAll(".deleteItem");
@@ -120,6 +124,8 @@ function removeProduct(){
     }
 }
 
+/////////////////////////////////////////////////////////////VALIDATION DU FORMULAIRE////////////////////////////////////////////////////////////////////
+
 let form = document.querySelector(".cart__order__form");
 
 const regexChar =  /^[A-Za-zÀ-ÖØ-öø-ÿ ,.'-]+$/;
@@ -131,6 +137,9 @@ const nom = document.getElementById("lastName");
 const ville = document.getElementById("city");
 const adresse = document.getElementById("address");
 const mail = document.getElementById("email");
+
+// Chaque constante du formulaire dispose de sa fonction de validation par les regex 
+// La fonction de validation sera lancé lorsqu'un evenement de type change aura ete détecté dans l'input correspondant 
 
 form.firstName.addEventListener("change" , (event) => {
     console.log(event.target.value);
@@ -206,6 +215,8 @@ function checkForm (){
 
 }
 
+/////////////////////////////////////////////////////////////ENVOI DE LA COMMANDE////////////////////////////////////////////////////////////////////
+
 function sendOrder(){
     
     let btn__order = document.getElementById("order");
@@ -213,12 +224,15 @@ function sendOrder(){
     btn__order.addEventListener("click", (event) => {
         event.preventDefault();
 
-        let onlyId = [];
+        let onlyId = []; // L'api ne pouvant recevoir que l'id produit, on déclare un tableau vide qui contiendra seulement l'id des produits demandés.
+
         const prenom = document.getElementById("firstName").value;
         const nom = document.getElementById("lastName").value;
         const ville = document.getElementById("city").value;
         const adresse = document.getElementById("address").value;
         const mail = document.getElementById("email").value;
+
+        // Préparation des objets à envoyer à l'api.
     
         let contactOrder = {
             firstName: prenom,
@@ -229,12 +243,14 @@ function sendOrder(){
         }
         console.log(contactOrder);
 
+        // Boucle for servant à isoler l'id des produits du panier 
         for(let i = 0; i < cartContent.length; i++){
             let productId = cartContent[i].id;
             console.log(productId);
             onlyId.push(productId);
         }
         
+        // Objet qui sera envoyé à l'api
         const toSend = {
             'products': onlyId,
             'contact': contactOrder,
