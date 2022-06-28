@@ -7,7 +7,7 @@ fetch('http://localhost:3000/api/products') // Fonction permettant de récuperer
         productsData = data; // productsData prend les données de data 
         console.log(productsData);
 
-        for(let i = 0; i < productsData.length; i++){ //Boucle permettant l'affichage des tous les objets json
+        for(let i = 0; i < productsData.length; i++){ //Boucle permettant l'affichage de tous les objets json
             
             //Création du lien vers la page produit
             let productLink = document.createElement("a");
